@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import CityList from "./data/city.list.json";
 
 const App = () => {
 
@@ -8,6 +9,7 @@ const App = () => {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState();
   const [weatherVisuals, setWeatherVisuals] = useState();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleChange = (e) => {
     console.log(e.target.value);
@@ -49,18 +51,31 @@ const App = () => {
       <Header />
       <section>
         <nav>
-          <input type="text" value={city} placeholder="Enter City Name" onChange={handleChange} />
-          <ul>
+          {/* <input type="text" value={city} placeholder="Enter City Name" onChange={handleChange} /> */}
+
+          <input type="text" placeholder="seach..." onChange={e => setSearchTerm(e.target.value)} />
+
+          {CityList.stream().filter((val) => {
+            if (searchTerm == "") {
+              return val
+            }
+            else if (val.first_name.toLowerCase().includes(searchTerm.toLowerCase())) {
+              return val;
+            }
+          }).map((val, key) => {
+            return <div>{val.first_name} </div>
+          })}
+          {/* <ul>
             {cities && cities.map((city, index) => (
               <li key={index}>
                 <button type="button" onClick={() => getCurrentWeather(city.lat, city.lon)}>{city.name}, {city.state}, {city.country}</button>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </nav>
         <article>
           <h1>{weather && `${weather.name}, ${weather.sys.country}`}</h1>
-          {weatherVisuals && <img title={weatherVisuals.description} src={`https://openweathermap.org/img/wn/${weatherVisuals.icon}.png`}></img>}
+          {weatherVisuals && <img alt="weather icon" title={weatherVisuals.description} src={`https://openweathermap.org/img/wn/${weatherVisuals.icon}.png`}></img>}
           <p>{weather && `The temperature in ${weather.name} is ${weather.main.temp}°C  but feels like ${weather.main.feels_like}°C`}</p>
           {weather && <table>
             <thead>
